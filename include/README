@@ -37,3 +37,12 @@ Read more about using header files in official GCC documentation:
 * Computed Includes
 
 https://gcc.gnu.org/onlinedocs/cpp/Header-Files.html
+
+# private_settings.h가 담고 있는 것?
+
+```c
+#define WIFI_SSID
+#define WIFI_PWD
+#define SERVER_PORT
+#define UDP_PORT
+```
