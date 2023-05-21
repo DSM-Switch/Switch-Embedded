@@ -3,13 +3,12 @@
 
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
-#include "private_settings.h"
 
 static
-void wifi_connect() {
-    WiFi.begin(WIFI_SSID, WIFI_PWD);             // Connect to the network
+void wifi_connect(const char* ssid, const char *passphrase) {
+    WiFi.begin(ssid, passphrase);             // Connect to the network
     Serial.print("\r\nConnecting to ");
-    Serial.print(WIFI_SSID); Serial.println(" ...");
+    Serial.print(ssid); Serial.println(" ...");
 
     int i = 0;
     while (WiFi.status() != WL_CONNECTED) { // Wait for the Wi-Fi to connect

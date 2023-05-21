@@ -12,6 +12,17 @@
         "initializer_list": "cpp",
         "ranges": "cpp",
         "regex": "cpp",
-        "functional": "cpp"
+        "functional": "cpp",
+        "bit": "cpp",
+        "*.tcc": "cpp",
+        "bitset": "cpp",
+        "random": "cpp",
+        "istream": "cpp",
+        "limits": "cpp",
+        "ostream": "cpp",
+        "sstream": "cpp",
+        "streambuf": "cpp",
+        "tuple": "cpp",
+        "set": "cpp"
     }
 }
