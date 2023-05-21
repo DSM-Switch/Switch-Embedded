@@ -21,6 +21,16 @@
 #define AP_SSID "esp8266"
 #define AP_PSWD "qwerty1234"
 
+#ifdef DEBUG
+    #define DEBUG_PRINTLN(x) Serial.println(x)
+    #define DEBUG_PRINT(x) Serial.print(x)
+    #define DEBUG_PRINTF(fmt, ...) Serial.printf(fmt, ##__VA_ARGS__)
+#else
+    #define DEBUG_PRINTLN(x)
+    #define DEBUG_PRINT(x)
+    #define DEBUG_PRINTF(fmt, ...)
+#endif
+
 // function declaration ===========================================
 
 static bool handle_name(MyServer&, MyServer::Method, const MyServer::Packet&);
@@ -67,10 +77,8 @@ void station_disconnected() {
     bool ap_success = WiFi.softAP(AP_SSID, AP_PSWD);
     bool server_success = server || server.begin(SERVER_PORT);
     (void)server_success;
-#if DEBUG > 0
-    Serial.printf("softAP: %s\n", ap_success ? "success" : "fail");
-    Serial.printf("server.begin: %s", server_success ? "success" : "fail");
-#endif
+    DEBUG_PRINTF("softAP: %s\n", ap_success ? "success" : "fail");
+    DEBUG_PRINTF("server.begin: %s", server_success ? "success" : "fail");
     if (ap_success) disconnectedEventHandler = WiFiEventHandler();
 }
 
@@ -81,10 +89,8 @@ void station_mode_got_ip(const WiFiEventStationModeGotIP& event) {
     (void)disconnect_success;
     (void)server_begin_success;
 
-#if DEBUG > 0
-    Serial.printf("softAPdisconnect: %s\n", disconnect_success ? "success" : "fail");
-    Serial.printf("server.begin: %s", server_begin_success ? "success" : "fail");
-#endif
+    DEBUG_PRINTF("softAPdisconnect: %s\n", disconnect_success ? "success" : "fail");
+    DEBUG_PRINTF("server.begin: %s", server_begin_success ? "success" : "fail");
 
     auto handler = [] (const auto& event) { station_disconnected(); };
     disconnectedEventHandler = WiFi.onStationModeDisconnected(handler);
@@ -100,12 +106,12 @@ void setup_wifi() {
 }
 
 void setup() {
-#if DEBUG > 0
     Serial.begin(115200);
+#ifdef DEBUG
     Serial.setDebugOutput(true);
+#endif
     delay(10);
     Serial.println();
-#endif
 
     pinMode(LED, OUTPUT);
     digitalWrite(LED, HIGH);
@@ -113,17 +119,13 @@ void setup() {
     setup_wifi();
 
     if (!LittleFS.begin()) {
-#if DEBUG > 0
-        Serial.println("An Error has occurred while mounting LittleFS");
-#endif
+        DEBUG_PRINTLN("An Error has occurred while mounting LittleFS");
     }
 
     File file = LittleFS.open("/name", "r");
     if (!file) {
         if (!(file = LittleFS.open("/name", "w"))) {
-#if DEBUG > 0
-            Serial.println("file(/name) open failed!");
-#endif
+            DEBUG_PRINTLN("file(/name) open failed!");
         } else {
             file.write("default_name");
             file.close();
@@ -133,17 +135,13 @@ void setup() {
     }
 
     if (!WiFi.setSleepMode(WIFI_LIGHT_SLEEP, DTIM)) {
-#if DEBUG > 0
-        Serial.println("setSleepMode failed!");
-#endif
+        DEBUG_PRINTLN("setSleepMode failed!");
     }
 }
 
 void loop() {
     if (!server.handleClient()) {
-#if DEBUG > 0
-        Serial.println("handle client failed!");
-#endif
+        DEBUG_PRINTLN("handle client failed!");
     }
 
     digitalWrite(LED, LED_STATE ? LOW : HIGH);
