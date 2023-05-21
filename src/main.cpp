@@ -66,6 +66,7 @@ static
 void station_disconnected() {
     bool ap_success = WiFi.softAP(AP_SSID, AP_PSWD);
     bool server_success = server || server.begin(SERVER_PORT);
+    (void)server_success;
 #if DEBUG > 0
     Serial.printf("softAP: %s\n", ap_success ? "success" : "fail");
     Serial.printf("server.begin: %s", server_success ? "success" : "fail");
@@ -74,18 +75,24 @@ void station_disconnected() {
 }
 
 static
-void setup_wifi() {
-    gotIpEventHandler = WiFi.onStationModeGotIP(
-        [] (const WiFiEventStationModeGotIP& event) {
-            bool disconnect_success = WiFi.softAPdisconnect();
-            bool server_begin_success = server || server.begin(SERVER_PORT);
+void station_mode_got_ip(const WiFiEventStationModeGotIP& event) {
+    bool disconnect_success = WiFi.softAPdisconnect();
+    bool server_begin_success = server || server.begin(SERVER_PORT);
+    (void)disconnect_success;
+    (void)server_begin_success;
+
 #if DEBUG > 0
-            Serial.printf("softAPdisconnect: %s\n", disconnect_success ? "success" : "fail");
-            Serial.printf("server.begin: %s", server_begin_success ? "success" : "fail");
+    Serial.printf("softAPdisconnect: %s\n", disconnect_success ? "success" : "fail");
+    Serial.printf("server.begin: %s", server_begin_success ? "success" : "fail");
 #endif
-            auto handler = [] (const auto& event) { station_disconnected(); };
-            disconnectedEventHandler = WiFi.onStationModeDisconnected(handler);
-        });
+
+    auto handler = [] (const auto& event) { station_disconnected(); };
+    disconnectedEventHandler = WiFi.onStationModeDisconnected(handler);
+}
+
+static
+void setup_wifi() {
+    gotIpEventHandler = WiFi.onStationModeGotIP(station_mode_got_ip);
 
     if (WiFi.begin() != WL_CONNECTED) {
         station_disconnected();
@@ -123,6 +130,12 @@ void setup() {
         }
     } else {
         file.close();
+    }
+
+    if (!WiFi.setSleepMode(WIFI_LIGHT_SLEEP, DTIM)) {
+#if DEBUG > 0
+        Serial.println("setSleepMode failed!");
+#endif
     }
 }
 
