@@ -20,6 +20,8 @@ MyServer::Method str2method(const char* str) {
             .method = MyServer::GET, 
         }
     };
+
+    if (!str) return MyServer::INVALID;
     
     for (const auto& a: method_table) {
         if (!strcmp(str, a.str)) {
@@ -53,6 +55,7 @@ bool MyServer::call_handler(const Packet& packet) {
     Method method = str2method(packet["method"]);
     if (method == Method::INVALID) return false;
     const char* type = packet["type"];
+    if (!type) return false;
 
     for (size_t i = 0; i < _action_size; ++i) {
         const auto& action = _actions[i];
