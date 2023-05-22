@@ -60,7 +60,8 @@ bool MyServer::handleClient() {
 
 bool MyServer::call_handler(const Packet& packet) {
     Method method = str2method(packet["method"]);
-    if (method == Method::INVALID) return false;
+    if (method == Method::INVALID || method == Method::ANY) return false;
+
     const char* type = packet["type"];
     if (!type) return false;
 
