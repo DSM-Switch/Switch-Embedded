@@ -16,8 +16,9 @@ public:
         ANY, SET, GET, INVALID
     };
 
-    struct Packet: public JsonDoc {
+    struct Packet: JsonDoc, Printable {
         Packet() : JsonDoc{ BUF_SIZE } { }
+        virtual size_t printTo(Print& p) const;
     };
 
     struct Action {

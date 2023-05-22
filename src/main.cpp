@@ -11,6 +11,7 @@
 #include <ArduinoJson.h>
 #include <LittleFS.h>
 #include "my_server.h"
+#include "debug.h"
 
 // macro ==========================================================
 
@@ -19,17 +20,8 @@
 #define LED LED_BUILTIN
 
 #define AP_SSID "esp8266"
-#define AP_PSWD "qwerty1234"
-
-#ifdef DEBUG
-    #define DEBUG_PRINTLN(x) Serial.println(x)
-    #define DEBUG_PRINT(x) Serial.print(x)
-    #define DEBUG_PRINTF(fmt, ...) Serial.printf(fmt, ##__VA_ARGS__)
-#else
-    #define DEBUG_PRINTLN(x)
-    #define DEBUG_PRINT(x)
-    #define DEBUG_PRINTF(fmt, ...)
-#endif
+// #define AP_PSWD "qwerty1234"
+#define AP_PSWD ""
 
 // function declaration ===========================================
 
@@ -108,7 +100,7 @@ void setup_wifi() {
 void setup() {
     Serial.begin(115200);
 #ifdef DEBUG
-    Serial.setDebugOutput(true);
+    // Serial.setDebugOutput(true);
 #endif
     delay(10);
     Serial.println();

@@ -1,4 +1,5 @@
 #include "my_server.h"
+#include "debug.h"
 
 static
 MyServer::Method str2method(const char* str) {
@@ -31,6 +32,10 @@ MyServer::Method str2method(const char* str) {
     return MyServer::INVALID;
 }
 
+size_t MyServer::Packet::printTo(Print& p) const {
+    return serializeJson(*this, p);
+}
+
 MyServer::MyServer(const Action* actions, size_t action_size)
     : _udp{}, _actions{ actions }, _action_size{ action_size }
 {
@@ -47,6 +52,8 @@ bool MyServer::handleClient() {
 
     Packet packet;
     if (!parse_packet(packet)) return false;
+
+    DEBUG_PRINTLN(packet);
 
     return call_handler(packet);
 }
