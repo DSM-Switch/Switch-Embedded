@@ -1,4 +1,4 @@
-#if 1
+#if 0
 
 // header =========================================================
 
@@ -97,6 +97,21 @@ void setup_wifi() {
     }
 }
 
+static
+void init_device_name() {
+    File file = LittleFS.open("/name", "r");
+    if (!file) {
+        if (!(file = LittleFS.open("/name", "w"))) {
+            DEBUG_PRINTLN("file(/name) open failed!");
+        } else {
+            file.write("default_name");
+            file.close();
+        }
+    } else {
+        file.close();
+    }
+}
+
 void setup() {
     Serial.begin(115200);
 #ifdef DEBUG
@@ -114,17 +129,7 @@ void setup() {
         DEBUG_PRINTLN("An Error has occurred while mounting LittleFS");
     }
 
-    File file = LittleFS.open("/name", "r");
-    if (!file) {
-        if (!(file = LittleFS.open("/name", "w"))) {
-            DEBUG_PRINTLN("file(/name) open failed!");
-        } else {
-            file.write("default_name");
-            file.close();
-        }
-    } else {
-        file.close();
-    }
+    init_device_name();
 
     if (!WiFi.setSleepMode(WIFI_LIGHT_SLEEP, DTIM)) {
         DEBUG_PRINTLN("setSleepMode failed!");
